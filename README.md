@@ -1,4 +1,4 @@
-# AuraCare ED | Emergency Patient Triage Queue & API
+# Orbemy Trial Task | Emergency Patient Triage Queue & API
 
 [![Platform](https://img.shields.io/badge/Platform-Web%20(Pure%20Vanilla)-0D2B22?style=flat-square)](#)
 [![Clinical Protocol](https://img.shields.io/badge/Clinical%20Standard-Emergency%20Severity%20Index%20(ESI)-E85D22?style=flat-square)](#)
