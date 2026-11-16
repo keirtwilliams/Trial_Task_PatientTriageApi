@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraCare ED | Patient Triage Queue</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-group">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <div class="brand-titles">
+          <h1>AuraCare Emergency Triage</h1>
+          <p>5-Level Clinical Priority Queue &bull; Emergency Severity Index (ESI)</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="main-layout">
+
+    <!-- Left Column: Patient Intake Form -->
+    <section class="card intake-card">
+      <div class="card-title-row">
+        <div class="title-with-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="8.5" cy="7" r="4"></circle>
+            <line x1="20" y1="8" x2="20" y2="14"></line>
+            <line x1="23" y1="11" x2="17" y2="11"></line>
+          </svg>
+          <h2>Patient Intake</h2>
+        </div>
+      </div>
+      <p class="section-desc">Register incoming patients with symptoms and clinical severity.</p>
+
+      <!-- Validation Summary Banner -->
+      <div id="error-box" class="error-box" style="display: none;" role="alert" aria-live="assertive"></div>
+
+      <form id="triage-form" novalidate>
+        <div class="form-group" id="group-name">
+          <label for="inp-name">Full Name *</label>
+          <input type="text" id="inp-name" placeholder="e.g. Eleanor Vance" autocomplete="off">
+          <span class="field-error-msg" id="err-name" style="display: none;"></span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" id="group-age" style="flex: 1;">
+            <label for="inp-age">Age *</label>
+            <input type="number" id="inp-age" placeholder="e.g. 45" min="0" max="120">
+            <span class="field-error-msg" id="err-age" style="display: none;"></span>
+          </div>
+          <div class="form-group" id="group-level" style="flex: 2;">
+            <label for="inp-level">Triage Urgency Level *</label>
+            <select id="inp-level">
+              <option value="">-- Select Urgency --</option>
+              <option value="1">Level 1 - Resuscitation (Immediate)</option>
+              <option value="2">Level 2 - Emergent (&lt; 15 mins)</option>
+              <option value="3" selected>Level 3 - Urgent (&lt; 60 mins)</option>
+              <option value="4">Level 4 - Less Urgent (&lt; 120 mins)</option>
+              <option value="5">Level 5 - Non-Urgent (&lt; 240 mins)</option>
+            </select>
+            <span class="field-error-msg" id="err-level" style="display: none;"></span>
+          </div>
+        </div>
+
+        <div class="form-group" id="group-complaint">
+          <label for="inp-complaint">Chief Complaint / Presenting Symptoms *</label>
+          <textarea id="inp-complaint" placeholder="Describe symptoms, vital signs, or injury mechanism..."></textarea>
+          <span class="field-error-msg" id="err-complaint" style="display: none;"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="btn-submit">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Enqueue Patient
+        </button>
+      </form>
+    </section>
+
+    <!-- Right Column: Priority Waiting Queue -->
+    <section class="card queue-card">
+      <div class="queue-header">
+        <div>
+          <div class="title-with-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            <h2>Priority Waiting Queue</h2>
+          </div>
+          <span id="queue-counter" class="queue-counter">0 Patients Waiting</span>
+        </div>
+
+        <div class="queue-actions">
+          <button id="btn-call-next" class="btn btn-urgent" title="Call the highest priority waiting patient">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            Call Next Patient
+          </button>
+          <button id="btn-clear" class="btn btn-outline" title="Clear all waiting patients">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- Spotlight: Currently Admitted Patient -->
+      <div id="called-spotlight" class="called-spotlight" style="display: none;">
+        <div class="spotlight-badge">
+          <span class="spotlight-pulse"></span>
+          ADMITTED TO ROOM
+        </div>
+        <div class="called-details">
+          <strong id="called-name">Patient Name</strong>
+          <span id="called-meta">ID &bull; Level &bull; Complaint</span>
+        </div>
+      </div>
+
+      <!-- Live Waiting List -->
+      <div id="queue-container" class="queue-container">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </section>
+
+  </main>
+
+  <script src="triage-api.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
